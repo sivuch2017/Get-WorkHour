@@ -35,17 +35,17 @@ Function execMain {
             if ($td[0] -match ".+\(([^)]+)\)") {
                 $td[0] = $Matches[1] + "`t"
             }
-            $result += $td -join ","
+            $script:result += $td -join ","
         }
     }
 
-    if ($eigyo -eq 0) {
+    if ($script:eigyo -eq 0) {
         $a = @(@($ie.Document.getElementsByTagName("table"))[7].getElementsByTagName("a"))[0]
         $a.target = "_self"
         $a.click()
         waitBusy([ref]$ie)
 
-        @($ie.Document.getElementsByTagName("table"))[4].getElementsByTagName("tr") | foreach-object -begin {$c = 0; $p = 0} -process {if ($_.outerHTML -match "workhourtable") {$c++; if ($_.outerHTML -match "pink") {$p++};}} -end {$eigyo = $c - $p}
+        @($ie.Document.getElementsByTagName("table"))[4].getElementsByTagName("tr") | foreach-object -begin {$c = 0; $p = 0} -process {if ($_.outerHTML -match "workhourtable") {$c++; if ($_.outerHTML -match "pink") {$p++};}} -end {$script:eigyo = $c - $p}
     }
     $ie.Quit()
 }
@@ -64,4 +64,4 @@ foreach ($key in $users.Keys) {
     execMain $topurl $users[$key][0] $users[$key][1]
 }
 $result = @("ç°åéÇÃâcã∆ì˙ÇÕ`t,${eigyo},ì˙") + $result
-$result | Out-File -FilePath $csvfile -Encoding default -Append
+$result | Out-File -FilePath $csvfile -Encoding default
